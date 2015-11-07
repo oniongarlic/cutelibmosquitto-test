@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSocketNotifier>
+#include <QTimer>
 #include <mosquittopp.h>
 
 using namespace mosqpp;
@@ -12,11 +13,13 @@ class SopoMygga : public QObject, public mosquittopp
     Q_OBJECT
 public:
     explicit SopoMygga(QObject *parent = 0);
-    ~SopoMygga() {}
+    ~SopoMygga();
 
     Q_PROPERTY(bool isConnected READ isConnected NOTIFY isConnectedeChanged)
     Q_PROPERTY(QString clientId READ clientId WRITE setClientId NOTIFY clientIdChanged)
     Q_PROPERTY(bool cleanSession READ cleanSession WRITE setCleanSession NOTIFY cleanSessionChanged)
+
+    Q_PROPERTY(int keepalive READ keepalive WRITE setKeepalive NOTIFY keepaliveChanged)
 
     Q_INVOKABLE int connect();
     Q_INVOKABLE int disconnect();
@@ -30,18 +33,16 @@ public:
     Q_INVOKABLE int setWill(QString topic, QString data, int qos=0, bool retain=false);
     Q_INVOKABLE void clearWill();
 
-    void on_connect(int rc) {
-        emit connected();
-    }
+    void on_connect(int rc);
 
-    void on_disconnect(int rc) {
-        emit disconnected();
-    }
+    void on_disconnect(int rc);
 
     void on_message(const struct mosquitto_message *message);
 
     void on_error();
     void on_log(int level, const char *str);
+
+    void timerEvent(QTimerEvent *event);
 
     Q_ENUMS(mosq_err_t)
 
@@ -60,6 +61,11 @@ public:
         return m_isConnected;
     }
 
+    int keepalive() const
+    {
+        return m_keepalive;
+    }
+
 signals:
     void connecting();
     void connected();
@@ -71,10 +77,21 @@ signals:
     void clientIdChanged(QString clientId);
     void cleanSessionChanged(bool cleanSession);
 
+    void keepaliveChanged(int keepalive);
+
 public slots:
 
     void setClientId(QString clientId);
     void setCleanSession(bool cleanSession);
+
+    void setKeepalive(int keepalive)
+    {
+        if (m_keepalive == keepalive)
+            return;
+
+        m_keepalive = keepalive;
+        emit keepaliveChanged(keepalive);
+    }
 
 private slots:
     void loopRead();
@@ -83,6 +100,8 @@ private slots:
 private:
     QSocketNotifier *m_notifier_read;
     QSocketNotifier *m_notifier_write;
+
+    int m_timer;
 
     QString m_hostname;
     int m_port;
