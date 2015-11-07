@@ -13,10 +13,12 @@ ApplicationWindow {
             title: qsTr("File")
             MenuItem {
                 text: qsTr("&Open")
+                enabled: !mqtt.isConnected
                 onTriggered: mqtt.connect();
             }
             MenuItem {
                 text: qsTr("&Close")
+                enabled: mqtt.isConnected
                 onTriggered: mqtt.disconnect();
             }
             MenuItem {
@@ -33,6 +35,7 @@ ApplicationWindow {
     MQTT {
         id: mqtt;
         clientId: "talorg-test"
+        keepalive: 6;
         onConnected: {
             console.debug("MQTT Connected!")
             dataModel.clear();
@@ -51,7 +54,7 @@ ApplicationWindow {
             console.debug(topic)
             console.debug(data)
 
-            dataModel.append({"topic": topic, "message": data})
+            dataModel.insert(0, {"topic": topic, "message": data})
         }
         onError: console.debug("Error!")
     }
@@ -60,19 +63,44 @@ ApplicationWindow {
         id: dataModel
     }
 
-    ListView {
-        id: view
+    Column {
         anchors.fill: parent
-        model: dataModel
-        delegate: Row {
+        ListView {
+            id: view
+            model: dataModel
+            height: parent.height/1.5
             width: parent.width
-            height: 30
-            spacing: 16;
-            Label {
-                text: topic                
+            delegate: Row {
+                width: parent.width
+                height: 30
+                spacing: 16;
+                Label {
+                    text: topic
+                }
+                Label {
+                    text: message
+                }
             }
-            Label {
-                text: message                
+        }
+
+        Row {
+            width: parent.width
+            TextInput {
+                id: txtTopic
+                width: parent.width/3
+            }
+            TextInput {
+                id: txtData
+                width: parent.width/3
+            }
+            Button {
+                id: txtSend
+                text: "Set"
+                enabled: mqtt.isConnected
+
+                onClicked: {
+                    mqtt.publish(txtTopic.text, txtData.text, 0, 0);
+                }
             }
         }
     }
