@@ -31,11 +31,14 @@ ApplicationWindow {
             }
         }
     }
+    statusBar: StatusBar {
+
+    }
 
     MQTT {
         id: mqtt;
         clientId: "talorg-test"
-        keepalive: 6;
+        keepalive: 60;
         onConnected: {
             console.debug("MQTT Connected!")
             dataModel.clear();
@@ -100,6 +103,22 @@ ApplicationWindow {
 
                 onClicked: {
                     mqtt.publish(txtTopic.text, txtData.text, 0, 0);
+                }
+            }
+        }
+        Row {
+            width: parent.width
+            TextInput {
+                id: subTopic
+                width: parent.width/2
+            }
+            Button {
+                id: btnSub
+                text: "Subscribe"
+                enabled: mqtt.isConnected
+
+                onClicked: {
+                    mqtt.subscribe(subTopic.text);
                 }
             }
         }
