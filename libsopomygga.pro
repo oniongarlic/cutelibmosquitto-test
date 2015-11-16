@@ -5,7 +5,7 @@ QT += qml quick
 SOURCES += main.cpp \
     sopomygga.cpp
 
-LIBS += -lmosquittopp
+LIBS += -lmosquitto -lmosquittopp
 
 RESOURCES += qml.qrc
 
