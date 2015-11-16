@@ -19,6 +19,14 @@ SopoMygga::~SopoMygga()
 
 }
 
+void SopoMygga::addTopicMatch(QString topic, int topic_d) {
+    m_topics.insert(topic.trimmed(), topic_d);
+}
+
+int SopoMygga::removeTopicMatch(QString topic) {
+   return m_topics.remove(topic);
+}
+
 int SopoMygga::connect()
 {
     int r, s;
@@ -181,6 +189,9 @@ void SopoMygga::on_message(const mosquitto_message *message)
     QString data=QString::fromLocal8Bit((char *)message->payload, message->payloadlen);
 
     emit msg(topic, data);
+
+    if (m_topics.contains(topic))
+        emit topicMatch(m_topics.value(topic));
 }
 
 void SopoMygga::on_error()

@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QSocketNotifier>
 #include <QTimer>
+#include <QMap>
 #include <mosquittopp.h>
 
 using namespace mosqpp;
@@ -18,6 +19,8 @@ public:
     Q_PROPERTY(bool isConnected READ isConnected NOTIFY isConnectedeChanged)
     Q_PROPERTY(QString clientId READ clientId WRITE setClientId NOTIFY clientIdChanged)
     Q_PROPERTY(bool cleanSession READ cleanSession WRITE setCleanSession NOTIFY cleanSessionChanged)
+    Q_PROPERTY(QString hostname READ hostname WRITE setHostname NOTIFY hostnameChanged)
+    Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
 
     Q_PROPERTY(int keepalive READ keepalive WRITE setKeepalive NOTIFY keepaliveChanged)
 
@@ -66,6 +69,18 @@ public:
         return m_keepalive;
     }
 
+    void addTopicMatch(QString topic, int topic_d);
+    int removeTopicMatch(QString topic);
+    QString hostname() const
+    {
+        return m_hostname;
+    }
+
+    int port() const
+    {
+        return m_port;
+    }
+
 signals:
     void connecting();
     void connected();
@@ -79,6 +94,12 @@ signals:
 
     void keepaliveChanged(int keepalive);
 
+    void topicMatch(int topic_id);
+
+    void hostnameChanged(QString hostname);
+
+    void portChanged(int port);
+
 public slots:
 
     void setClientId(QString clientId);
@@ -91,6 +112,24 @@ public slots:
 
         m_keepalive = keepalive;
         emit keepaliveChanged(keepalive);
+    }
+
+    void setHostname(QString hostname)
+    {
+        if (m_hostname == hostname)
+            return;
+
+        m_hostname = hostname;
+        emit hostnameChanged(hostname);
+    }
+
+    void setPort(int port)
+    {
+        if (m_port == port)
+            return;
+
+        m_port = port;
+        emit portChanged(port);
     }
 
 private slots:
@@ -116,6 +155,8 @@ private:
     QString m_clientId;
     bool m_cleanSession;
     bool m_isConnected;
+
+    QMap<QString, int> m_topics;
 };
 
 #endif // SOPOMYGGA_H
