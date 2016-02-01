@@ -128,7 +128,32 @@ int SopoMygga::disconnectFromHost()
 
 int SopoMygga::reconnectToHost()
 {
-    return reconnect_async();
+    int r, s;
+
+    r=reconnect_async();
+
+    delete m_notifier_read;
+    delete m_notifier_write;
+
+    if (r!=MOSQ_ERR_SUCCESS) {
+        qWarning() << "Connection failure";
+        return r;
+    }
+
+    s=socket();
+    if (s==-1) {
+        qWarning() << "Failed to get mosquitto connection socket";
+    }
+
+    m_notifier_read = new QSocketNotifier(s, QSocketNotifier::Read, this);
+    QObject::connect(m_notifier_read, SIGNAL(activated(int)), this, SLOT(loopRead()));
+
+    m_notifier_write = new QSocketNotifier(s, QSocketNotifier::Write, this);
+    QObject::connect(m_notifier_write, SIGNAL(activated(int)), this, SLOT(loopWrite()));
+
+    emit connecting();
+
+    return r;
 }
 
 int SopoMygga::subscribe(QString topic, int qos)
