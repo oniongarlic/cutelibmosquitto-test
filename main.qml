@@ -1,5 +1,6 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
+import QtQuick.Layouts 1.1
 import org.tal.sopomygga 1.0
 
 ApplicationWindow {
@@ -14,12 +15,17 @@ ApplicationWindow {
             MenuItem {
                 text: qsTr("&Open")
                 enabled: !mqtt.isConnected
-                onTriggered: mqtt.connect();
+                onTriggered: mqtt.connectToHost();
+            }
+            MenuItem {
+                text: qsTr("&Reconnect")
+                enabled: mqtt.isConnected
+                onTriggered: mqtt.reconnectToHost();
             }
             MenuItem {
                 text: qsTr("&Close")
                 enabled: mqtt.isConnected
-                onTriggered: mqtt.disconnect();
+                onTriggered: mqtt.disconnectFromHost();
             }
             MenuItem {
                 text: qsTr("Clear input")
@@ -32,13 +38,17 @@ ApplicationWindow {
         }
     }
     statusBar: StatusBar {
-
+        RowLayout {
+            anchors.fill: parent
+            Label { text: mqtt.isConnected ? "Connected to broker" : "Disconnected" }
+        }
     }
 
     MQTT {
         id: mqtt;
         clientId: "talorg-test"
         keepalive: 60;
+        hostname: "amos.tal.org"
         onConnected: {
             console.debug("MQTT Connected!")
             dataModel.clear();

@@ -24,9 +24,9 @@ public:
 
     Q_PROPERTY(int keepalive READ keepalive WRITE setKeepalive NOTIFY keepaliveChanged)
 
-    Q_INVOKABLE int connect();
-    Q_INVOKABLE int disconnect();
-    Q_INVOKABLE int reconnect();
+    Q_INVOKABLE int connectToHost();
+    Q_INVOKABLE int disconnectFromHost();
+    Q_INVOKABLE int reconnectToHost();
 
     Q_INVOKABLE int subscribe(QString topic, int qos=0);
     Q_INVOKABLE int unsubscribe(QString topic);

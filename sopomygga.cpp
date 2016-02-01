@@ -27,7 +27,7 @@ int SopoMygga::removeTopicMatch(QString topic) {
    return m_topics.remove(topic);
 }
 
-int SopoMygga::connect()
+int SopoMygga::connectToHost()
 {
     int r, s;
 
@@ -116,7 +116,7 @@ void SopoMygga::loopWrite() {
 
 }
 
-int SopoMygga::disconnect()
+int SopoMygga::disconnectFromHost()
 {
     if (m_isConnected==false)
         return MOSQ_ERR_NO_CONN;
@@ -126,7 +126,7 @@ int SopoMygga::disconnect()
     return r;
 }
 
-int SopoMygga::reconnect()
+int SopoMygga::reconnectToHost()
 {
     return reconnect_async();
 }
@@ -204,8 +204,6 @@ void SopoMygga::on_log(int level, const char *str)
 {
     qDebug() << "mqtt: " << level << str;
 }
-
-
 
 void SopoMygga::setClientId(QString clientId)
 {
