@@ -41,6 +41,7 @@ ApplicationWindow {
         RowLayout {
             anchors.fill: parent
             Label { text: mqtt.isConnected ? "Connected to broker" : "Disconnected" }
+            Label { text: mqtt.messageCount }
         }
     }
 
@@ -49,15 +50,20 @@ ApplicationWindow {
         clientId: "talorg-test"
         keepalive: 60;
         hostname: "amos.tal.org"
+
+        property int messageCount: 0
+
         onConnected: {
             console.debug("MQTT Connected!")
             dataModel.clear();
             subscribe("radio/yle/#")
+            subscribe("sauna/#")
             publish("test/app/online", 1, 2, true);
             setWill("test/app/online", 0, 2, true);
         }
         onDisconnected: {
             console.debug("MQTT Disconnected!")
+            messageCount=0;
         }
         onConnecting: {
             console.debug("Connecting...")
@@ -67,13 +73,28 @@ ApplicationWindow {
             console.debug(topic)
             console.debug(data)
 
-            dataModel.insert(0, {"topic": topic, "message": data})
+            messageCount++
+
+            dataModel.updateOrInsert({"topic": topic, "message": data})
         }
         onError: console.debug("Error!")
     }
 
     ListModel {
         id: dataModel
+
+        function updateOrInsert(data) {
+            var topic=data.topic;
+
+            for (var i=0;i<dataModel.count;i++) {
+                var tmp=dataModel.get(i);
+                if (tmp.topic==topic) {
+                    dataModel.set(i, data);
+                    return;
+                }
+            }
+            dataModel.insert(0, data)
+        }
     }
 
     Column {
