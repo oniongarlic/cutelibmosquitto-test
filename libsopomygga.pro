@@ -1,20 +1,6 @@
-TEMPLATE = app
+TEMPLATE = subdirs
 
-QT += qml quick
+SUBDIRS += src examples
 
-SOURCES += main.cpp \
-    sopomygga.cpp
 
-LIBS += -lmosquitto -lmosquittopp
-
-RESOURCES += qml.qrc
-
-# Additional import path used to resolve QML modules in Qt Creator's code model
-QML_IMPORT_PATH =
-
-# Default rules for deployment.
-include(deployment.pri)
-
-HEADERS += \
-    sopomygga.h
-
+PROJECT_NAME = libsopomygga
