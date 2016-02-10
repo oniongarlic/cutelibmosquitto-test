@@ -8,7 +8,7 @@ HEADERS +=
 INCLUDEPATH += ../src
 
 LIBPATH += ../src
-LIBS += -lmosquitto -lmosquittopp -lsopomygga
+LIBS += ../src/libsopomygga.a -lmosquitto -lmosquittopp 
 
 RESOURCES += qml.qrc
 
