@@ -2,6 +2,8 @@ TEMPLATE = lib
 
 QT += qml quick
 
+CONFIG += staticlib
+
 TARGET = sopomygga
 
 LIBS += -lmosquitto -lmosquittopp
