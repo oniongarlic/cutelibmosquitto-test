@@ -3,6 +3,7 @@
 
 SopoMygga::SopoMygga(QObject *parent) :
     QObject(parent),
+    m_timer(0),
     m_hostname("localhost"),
     m_port(1883),
     m_keepalive(60),
@@ -203,9 +204,14 @@ void SopoMygga::on_connect(int rc) {
 
 void SopoMygga::on_disconnect(int rc) {
     m_isConnected=false;
+
+    if (m_timer>0) {
+        killTimer(m_timer);
+        m_timer=0;
+    }
+
     emit disconnected();
     emit isConnectedeChanged(m_isConnected);
-    killTimer(m_timer);
 }
 
 void SopoMygga::on_message(const mosquitto_message *message)
