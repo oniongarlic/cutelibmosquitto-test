@@ -2,6 +2,8 @@ TEMPLATE = app
 
 QT += qml quick
 
+TARGET = sopomygga
+
 SOURCES += main.cpp
 HEADERS += 
 
