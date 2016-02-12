@@ -110,9 +110,15 @@ ApplicationWindow {
             width: parent.width
             TextInput {
                 id: txtHostname
+                text: app.hostname
+                Layout.fillWidth: true
+                onTextChanged: app.hostname=text;
             }
             TextInput {
                 id: txtID
+                text: app.clientid
+                Layout.fillWidth: true
+                onTextChanged: app.clientid=text;
             }
         }
 
