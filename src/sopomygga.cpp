@@ -10,6 +10,8 @@ SopoMygga::SopoMygga(QObject *parent) :
     m_cleanSession(true),
     m_isConnected(false),
     m_clientId(),
+    m_tlsEnabled(false),
+    m_tls_insecure(false),
     mosquittopp(NULL, true)
 {
 
@@ -48,6 +50,11 @@ int SopoMygga::connectToHost()
     if (r!=MOSQ_ERR_SUCCESS) {
         qWarning() << "Connection failure";
         return r;
+    }
+
+    if (m_tlsEnabled) {
+        tls_set(m_tls_ca.toLatin1().data(), m_tls_capath.toLatin1().data(), m_tls_cert.toLatin1().data(), m_tls_key.toLatin1().data(), NULL);
+        tls_insecure_set(m_tls_insecure);
     }
 
     s=socket();

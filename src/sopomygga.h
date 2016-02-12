@@ -24,6 +24,8 @@ public:
 
     Q_PROPERTY(int keepalive READ keepalive WRITE setKeepalive NOTIFY keepaliveChanged)
 
+    Q_PROPERTY(bool tlsEnabled READ tlsEnabled WRITE setTls_enabled NOTIFY tlsEnabledChanged)
+
     Q_INVOKABLE int connectToHost();
     Q_INVOKABLE int disconnectFromHost();
     Q_INVOKABLE int reconnectToHost();
@@ -41,11 +43,8 @@ public:
     int removeTopicMatch(const QString topic);
 
     void on_connect(int rc);
-
     void on_disconnect(int rc);
-
     void on_message(const struct mosquitto_message *message);
-
     void on_error();
     void on_log(int level, const char *str);
 
@@ -83,6 +82,11 @@ public:
         return m_port;
     }
 
+    bool tlsEnabled() const
+    {
+        return m_tlsEnabled;
+    }
+
 signals:
     void connecting();
     void connected();
@@ -101,6 +105,8 @@ signals:
     void hostnameChanged(QString hostname);
 
     void portChanged(int port);
+
+    void tlsEnabledChanged(bool tlsEnabled);
 
 public slots:
 
@@ -134,6 +140,15 @@ public slots:
         emit portChanged(port);
     }
 
+    void setTls_enabled(bool tlsEnabled)
+    {
+        if (m_tlsEnabled == tlsEnabled)
+            return;
+
+        m_tlsEnabled = tlsEnabled;
+        emit tlsEnabledChanged(tlsEnabled);
+    }
+
 private slots:
     void loopRead();
     void loopWrite();
@@ -144,12 +159,22 @@ private:
 
     int m_timer;
 
+    // Peer
     QString m_hostname;
     int m_port;
     int m_keepalive;
 
+    // User
     QString m_username;
     QString m_password;
+
+    // TLS
+    bool m_tlsEnabled;
+    bool m_tls_insecure;
+    QString m_tls_ca;
+    QString m_tls_capath;
+    QString m_tls_cert;
+    QString m_tls_key;
 
     int m_mid;
     int m_smid;
