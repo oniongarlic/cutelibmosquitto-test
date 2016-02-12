@@ -4,10 +4,16 @@ import QtQuick.Layouts 1.1
 import org.tal.sopomygga 1.0
 
 ApplicationWindow {
+    id: app
     visible: true
     width: 640
     height: 480
-    title: qsTr("Hello World")
+    title: qsTr("libsopomygga test application")
+
+    property string hostname: "localhost"
+    property string username: ""
+    property string password: ""
+    property string clientid: "talorg-test"
 
     menuBar: MenuBar {
         Menu {
@@ -47,9 +53,9 @@ ApplicationWindow {
 
     MQTT {
         id: mqtt;
-        clientId: "talorg-test"
+        clientId: app.clientid
         keepalive: 60;
-        hostname: "amos.tal.org"
+        hostname: app.hostname
 
         property int messageCount: 0
 
@@ -97,35 +103,58 @@ ApplicationWindow {
         }
     }
 
-    Column {
+    ColumnLayout {
         anchors.fill: parent
+        spacing: 8
+        RowLayout {
+            width: parent.width
+            TextInput {
+                id: txtHostname
+            }
+            TextInput {
+                id: txtID
+            }
+        }
+
         ListView {
             id: view
             model: dataModel
-            height: parent.height/1.5
+            //Layout.fillHeight: true
+            Layout.minimumHeight: 120
+            Layout.preferredHeight: 300
             width: parent.width
             delegate: Row {
                 width: parent.width
                 height: 30
                 spacing: 16;
-                Label {
+                Text {
+                    color: "#205806"
                     text: topic
                 }
-                Label {
+                Text {
+                    color: "#051460"
                     text: message
                 }
             }
+            onCountChanged: {
+                console.debug("Items: "+count)
+            }
         }
 
-        Row {
+        RowLayout {
             width: parent.width
+            spacing: 8
             TextInput {
                 id: txtTopic
-                width: parent.width/3
+                text: "/test/topic"
+                Layout.minimumWidth: 80
+                Layout.fillWidth: true
             }
             TextInput {
                 id: txtData
-                width: parent.width/3
+                text: "TestData 1 2 3"
+                Layout.minimumWidth: 80
+                Layout.fillWidth: true
             }
             Button {
                 id: txtSend
@@ -137,11 +166,12 @@ ApplicationWindow {
                 }
             }
         }
-        Row {
+        RowLayout {
             width: parent.width
             TextInput {
                 id: subTopic
-                width: parent.width/2
+                Layout.minimumWidth: 80
+                Layout.fillWidth: true
             }
             Button {
                 id: btnSub
