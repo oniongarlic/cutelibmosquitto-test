@@ -122,7 +122,7 @@ ApplicationWindow {
             //Layout.fillHeight: true
             Layout.minimumHeight: 120
             Layout.preferredHeight: 300
-            width: parent.width
+            Layout.fillWidth: true
             delegate: Row {
                 width: parent.width
                 height: 30
