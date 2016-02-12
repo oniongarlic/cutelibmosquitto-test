@@ -154,6 +154,8 @@ private slots:
     void loopWrite();
 
 private:
+    void shutdown();
+
     QSocketNotifier *m_notifier_read;
     QSocketNotifier *m_notifier_write;
 

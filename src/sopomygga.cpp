@@ -34,6 +34,9 @@ int SopoMygga::connectToHost()
 {
     int r, s;
 
+    if (m_isConnected)
+        return MOSQ_ERR_CONN_PENDING;
+
     r=mosquittopp::reinitialise(m_clientId.isEmpty() ? NULL : m_clientId.toLocal8Bit().data(), m_cleanSession);
     if (r!=MOSQ_ERR_SUCCESS) {
         qWarning() << "Failed to set client id";
@@ -78,8 +81,14 @@ void SopoMygga::timerEvent(QTimerEvent *event)
     int r;
 
     r=loop_misc();
-    if (r!=MOSQ_ERR_SUCCESS) {
+    switch (r) {
+    case MOSQ_ERR_SUCCESS:
+
+        break;
+    default:
         qWarning() << "Misc fail " << r;
+        return;
+        break;
     }
 
     m_notifier_write->setEnabled(true);
@@ -124,6 +133,24 @@ void SopoMygga::loopWrite() {
 
 }
 
+void SopoMygga::shutdown()
+{
+    if (m_timer>0) {
+        killTimer(m_timer);
+        m_timer=0;
+    }
+
+    if (m_notifier_read) {
+        delete m_notifier_read;
+        m_notifier_read=NULL;
+    }
+    if (m_notifier_write) {
+        delete m_notifier_write;
+        m_notifier_write=NULL;
+    }
+
+}
+
 int SopoMygga::disconnectFromHost()
 {
     if (m_isConnected==false)
@@ -139,8 +166,7 @@ int SopoMygga::reconnectToHost()
 
     r=reconnect_async();
 
-    delete m_notifier_read;
-    delete m_notifier_write;
+    shutdown();
 
     if (r!=MOSQ_ERR_SUCCESS) {
         qWarning() << "Connection failure";
@@ -219,10 +245,7 @@ void SopoMygga::on_connect(int rc) {
 void SopoMygga::on_disconnect(int rc) {
     m_isConnected=false;
 
-    if (m_timer>0) {
-        killTimer(m_timer);
-        m_timer=0;
-    }
+    shutdown();
 
     emit disconnected();
     emit isConnectedeChanged(m_isConnected);
