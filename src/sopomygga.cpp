@@ -20,11 +20,11 @@ SopoMygga::~SopoMygga()
 
 }
 
-void SopoMygga::addTopicMatch(QString topic, int topic_d) {
+void SopoMygga::addTopicMatch(const QString topic, int topic_d) {
     m_topics.insert(topic.trimmed(), topic_d);
 }
 
-int SopoMygga::removeTopicMatch(QString topic) {
+int SopoMygga::removeTopicMatch(const QString topic) {
    return m_topics.remove(topic);
 }
 
@@ -122,8 +122,7 @@ int SopoMygga::disconnectFromHost()
     if (m_isConnected==false)
         return MOSQ_ERR_NO_CONN;
     int r=mosquittopp::disconnect();
-    delete m_notifier_read;
-    delete m_notifier_write;
+
     return r;
 }
 
@@ -157,7 +156,7 @@ int SopoMygga::reconnectToHost()
     return r;
 }
 
-int SopoMygga::subscribe(QString topic, int qos)
+int SopoMygga::subscribe(const QString topic, int qos)
 {
     m_notifier_write->setEnabled(true);
     int r=mosquittopp::subscribe(&m_smid, topic.toLocal8Bit().data(), qos);
@@ -165,7 +164,7 @@ int SopoMygga::subscribe(QString topic, int qos)
     return r;
 }
 
-int SopoMygga::unsubscribe(QString topic)
+int SopoMygga::unsubscribe(const QString topic)
 {
     m_notifier_write->setEnabled(true);
     int r=mosquittopp::unsubscribe(&m_mid, topic.toLocal8Bit().data());
@@ -173,7 +172,7 @@ int SopoMygga::unsubscribe(QString topic)
     return r;
 }
 
-int SopoMygga::publish(QString topic, QString data, int qos, bool retain)
+int SopoMygga::publish(const QString topic, QString data, int qos, bool retain)
 {
     m_notifier_write->setEnabled(true);
     int r=mosquittopp::publish(&m_pmid, topic.toLocal8Bit().data(), data.size(), data.toLocal8Bit().data(), qos, retain);
@@ -181,7 +180,15 @@ int SopoMygga::publish(QString topic, QString data, int qos, bool retain)
     return r;
 }
 
-int SopoMygga::setWill(QString topic, QString data, int qos, bool retain)
+int SopoMygga::publish(const QString topic, QByteArray data, int qos, bool retain)
+{
+    m_notifier_write->setEnabled(true);
+    int r=mosquittopp::publish(&m_pmid, topic.toLocal8Bit().data(), data.size(), data.data(), qos, retain);
+
+    return r;
+}
+
+int SopoMygga::setWill(const QString topic, QString data, int qos, bool retain)
 {
     m_notifier_write->setEnabled(true);
     int r=will_set(topic.toLocal8Bit().data(), data.size(), data.toLocal8Bit().data(), qos, retain);

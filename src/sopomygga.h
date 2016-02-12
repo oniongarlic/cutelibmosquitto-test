@@ -28,13 +28,17 @@ public:
     Q_INVOKABLE int disconnectFromHost();
     Q_INVOKABLE int reconnectToHost();
 
-    Q_INVOKABLE int subscribe(QString topic, int qos=0);
-    Q_INVOKABLE int unsubscribe(QString topic);
+    Q_INVOKABLE int subscribe(const QString topic, int qos=0);
+    Q_INVOKABLE int unsubscribe(const QString topic);
 
-    Q_INVOKABLE int publish(QString topic, QString data, int qos=0, bool retain=false);
+    Q_INVOKABLE int publish(const QString topic, QString data, int qos=0, bool retain=false);
+    Q_INVOKABLE int publish(const QString topic, QByteArray data, int qos=0, bool retain=false);
 
-    Q_INVOKABLE int setWill(QString topic, QString data, int qos=0, bool retain=false);
+    Q_INVOKABLE int setWill(const QString topic, QString data, int qos=0, bool retain=false);
     Q_INVOKABLE void clearWill();
+
+    void addTopicMatch(const QString topic, int topic_d);
+    int removeTopicMatch(const QString topic);
 
     void on_connect(int rc);
 
@@ -69,8 +73,6 @@ public:
         return m_keepalive;
     }
 
-    void addTopicMatch(QString topic, int topic_d);
-    int removeTopicMatch(QString topic);
     QString hostname() const
     {
         return m_hostname;
