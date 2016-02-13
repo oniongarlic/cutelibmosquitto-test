@@ -1,6 +1,7 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.1
+import QtQuick.Dialogs 1.1
 import org.tal.sopomygga 1.0
 
 ApplicationWindow {
@@ -56,6 +57,8 @@ ApplicationWindow {
         clientId: app.clientid
         keepalive: 60;
         hostname: app.hostname
+        username: app.username
+        password: app.password
 
         property int messageCount: 0
 
@@ -108,17 +111,34 @@ ApplicationWindow {
         spacing: 8
         RowLayout {
             width: parent.width
-            TextInput {
+            spacing: 8
+            TextWidget {
                 id: txtHostname
+                label: "Hostname"
                 text: app.hostname
                 Layout.fillWidth: true
                 onTextChanged: app.hostname=text;
             }
-            TextInput {
+            TextWidget {
                 id: txtID
+                label: "Client ID"
                 text: app.clientid
                 Layout.fillWidth: true
                 onTextChanged: app.clientid=text;
+            }
+            TextWidget {
+                id: txtUsername
+                label: "Username"
+                text: app.username
+                Layout.fillWidth: true
+                onTextChanged: app.username=text;
+            }
+            TextWidget {
+                id: txtPassword
+                label: "Password"
+                text: app.password
+                Layout.fillWidth: true
+                onTextChanged: app.password=text;
             }
         }
 
