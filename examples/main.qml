@@ -170,14 +170,16 @@ ApplicationWindow {
         RowLayout {
             width: parent.width
             spacing: 8
-            TextInput {
+            TextWidget {
                 id: txtTopic
+                label: "Topic"
                 text: "/test/topic"
                 Layout.minimumWidth: 80
                 Layout.fillWidth: true
             }
-            TextInput {
+            TextWidget {
                 id: txtData
+                label: "Data"
                 text: "TestData 1 2 3"
                 Layout.minimumWidth: 80
                 Layout.fillWidth: true
@@ -194,9 +196,10 @@ ApplicationWindow {
         }
         RowLayout {
             width: parent.width
-            TextInput {
+            TextWidget {
                 id: subTopic
-                Layout.minimumWidth: 80
+                label: "Subscribe to topic"
+                Layout.minimumWidth: 200
                 Layout.fillWidth: true
             }
             Button {
