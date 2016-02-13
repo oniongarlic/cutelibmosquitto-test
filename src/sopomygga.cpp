@@ -43,10 +43,15 @@ int SopoMygga::connectToHost()
         return r;
     }
 
-    r=mosquittopp::username_pw_set(m_username.isEmpty() ? NULL : m_username.toLocal8Bit().data(), m_password.isEmpty() ? NULL : m_password.toLocal8Bit().data());
-    if (r!=MOSQ_ERR_SUCCESS) {
-        qWarning() << "Failed to set username/password";
-        return r;
+    qDebug() << m_username;
+    qDebug() << m_password;
+
+    if (m_username.isEmpty()==false) {
+        r=mosquittopp::username_pw_set(m_username.toLocal8Bit().data(), m_password.isEmpty() ? NULL : m_password.toLocal8Bit().data());
+        if (r!=MOSQ_ERR_SUCCESS) {
+            qWarning() << "Failed to set username/password";
+            return r;
+        }
     }
 
     r=mosquittopp::connect_async(m_hostname.toLocal8Bit().data(), m_port, m_keepalive);

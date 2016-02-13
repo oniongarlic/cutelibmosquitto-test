@@ -21,8 +21,10 @@ public:
     Q_PROPERTY(bool cleanSession READ cleanSession WRITE setCleanSession NOTIFY cleanSessionChanged)
     Q_PROPERTY(QString hostname READ hostname WRITE setHostname NOTIFY hostnameChanged)
     Q_PROPERTY(int port READ port WRITE setPort NOTIFY portChanged)
-
     Q_PROPERTY(int keepalive READ keepalive WRITE setKeepalive NOTIFY keepaliveChanged)
+
+    Q_PROPERTY(QString username READ username WRITE setUsername NOTIFY usernameChanged)
+    Q_PROPERTY(QString password READ password WRITE setPassword NOTIFY passwordChanged)
 
     Q_PROPERTY(bool tlsEnabled READ tlsEnabled WRITE setTls_enabled NOTIFY tlsEnabledChanged)
 
@@ -87,6 +89,16 @@ public:
         return m_tlsEnabled;
     }
 
+    QString username() const
+    {
+        return m_username;
+    }
+
+    QString password() const
+    {
+        return m_password;
+    }
+
 signals:
     void connecting();
     void connected();
@@ -107,6 +119,10 @@ signals:
     void portChanged(int port);
 
     void tlsEnabledChanged(bool tlsEnabled);
+
+    void usernameChanged(QString username);
+
+    void passwordChanged(QString password);
 
 public slots:
 
@@ -147,6 +163,24 @@ public slots:
 
         m_tlsEnabled = tlsEnabled;
         emit tlsEnabledChanged(tlsEnabled);
+    }
+
+    void setUsername(QString username)
+    {
+        if (m_username == username)
+            return;
+
+        m_username = username;
+        emit usernameChanged(username);
+    }
+
+    void setPassword(QString password)
+    {
+        if (m_password == password)
+            return;
+
+        m_password = password;
+        emit passwordChanged(password);
     }
 
 private slots:
