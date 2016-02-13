@@ -219,6 +219,15 @@ ApplicationWindow {
                     mqtt.subscribe(subTopic.text);
                 }
             }
+            Button {
+                id: btnUnSub
+                text: "Unsubscribe"
+                enabled: mqtt.isConnected
+
+                onClicked: {
+                    mqtt.unsubscribe(subTopic.text);
+                }
+            }
         }
     }
 
