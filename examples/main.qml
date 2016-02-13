@@ -145,21 +145,29 @@ ApplicationWindow {
         ListView {
             id: view
             model: dataModel
-            //Layout.fillHeight: true
+            Layout.fillHeight: true
             Layout.minimumHeight: 120
             Layout.preferredHeight: 300
             Layout.fillWidth: true
-            delegate: Row {
-                width: parent.width
-                height: 30
-                spacing: 16;
-                Text {
-                    color: "#205806"
-                    text: topic
-                }
-                Text {
-                    color: "#051460"
-                    text: message
+            clip: true
+            delegate: Rectangle {
+                height: c.height
+                width: parent.width+8
+                border.color: "#4560ea"
+                ColumnLayout {
+                    id: c
+                    height: t.height+m.height+16
+                    spacing: 2;
+                    Text {
+                        id: t
+                        color: "#205806"
+                        text: topic
+                    }
+                    Text {
+                        id: m
+                        color: "#051460"
+                        text: message
+                    }
                 }
             }
             onCountChanged: {
