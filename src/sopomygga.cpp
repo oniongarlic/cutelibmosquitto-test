@@ -60,10 +60,7 @@ int SopoMygga::connectToHost()
     if (r!=MOSQ_ERR_SUCCESS) {
         qWarning() << "Failed to set client id";
         return r;
-    }
-
-    qDebug() << m_username;
-    qDebug() << m_password;
+    }    
 
     if (m_username.isEmpty()==false) {
         r=mosquittopp::username_pw_set(m_username.toLocal8Bit().data(), m_password.isEmpty() ? NULL : m_password.toLocal8Bit().data());
