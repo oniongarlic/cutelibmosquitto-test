@@ -22,11 +22,13 @@ SopoMygga::~SopoMygga()
 
 }
 
-void SopoMygga::addTopicMatch(const QString topic, int topic_d) {
+void SopoMygga::addTopicMatch(const QString topic, int topic_d)
+{
     m_topics.insert(topic.trimmed(), topic_d);
 }
 
-int SopoMygga::removeTopicMatch(const QString topic) {
+int SopoMygga::removeTopicMatch(const QString topic)
+{
    return m_topics.remove(topic);
 }
 
@@ -104,7 +106,8 @@ void SopoMygga::timerEvent(QTimerEvent *event)
     }
 }
 
-void SopoMygga::loopRead() {
+void SopoMygga::loopRead()
+{
     int r;
 
     qDebug("LR");
@@ -116,7 +119,8 @@ void SopoMygga::loopRead() {
 
 }
 
-void SopoMygga::loopWrite() {
+void SopoMygga::loopWrite()
+{
     int r;
 
     m_notifier_write->setEnabled(false);
@@ -240,14 +244,16 @@ void SopoMygga::clearWill()
     will_clear();
 }
 
-void SopoMygga::on_connect(int rc) {
+void SopoMygga::on_connect(int rc)
+{
     m_isConnected=true;
     emit connected();
     emit isConnectedeChanged(m_isConnected);
     m_timer=startTimer(1000);
 }
 
-void SopoMygga::on_disconnect(int rc) {
+void SopoMygga::on_disconnect(int rc)
+{
     m_isConnected=false;
 
     shutdown();
