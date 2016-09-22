@@ -185,6 +185,7 @@ int SopoMygga::reconnectToHost()
     s=socket();
     if (s==-1) {
         qWarning() << "Failed to get mosquitto connection socket";
+        return MOSQ_ERR_NOT_FOUND;
     }
 
     m_notifier_read = new QSocketNotifier(s, QSocketNotifier::Read, this);
