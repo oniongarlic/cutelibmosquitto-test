@@ -220,6 +220,7 @@ private:
     bool m_isConnected;
 
     QMap<QString, int> m_topics;
+    bool connectSocketNotifiers();
 };
 
 #endif // SOPOMYGGA_H

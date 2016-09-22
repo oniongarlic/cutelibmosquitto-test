@@ -32,6 +32,23 @@ int SopoMygga::removeTopicMatch(const QString topic)
    return m_topics.remove(topic);
 }
 
+bool SopoMygga::connectSocketNotifiers()
+{
+    int s=socket();
+    if (s==-1) {
+        qWarning() << "Failed to get mosquitto connection socket";
+        return false;
+    }
+
+    m_notifier_read = new QSocketNotifier(s, QSocketNotifier::Read, this);
+    QObject::connect(m_notifier_read, SIGNAL(activated(int)), this, SLOT(loopRead()));
+
+    m_notifier_write = new QSocketNotifier(s, QSocketNotifier::Write, this);
+    QObject::connect(m_notifier_write, SIGNAL(activated(int)), this, SLOT(loopWrite()));
+
+    return true;
+}
+
 int SopoMygga::connectToHost()
 {
     int r, s;
@@ -67,16 +84,31 @@ int SopoMygga::connectToHost()
         tls_insecure_set(m_tls_insecure);
     }
 
-    s=socket();
-    if (s==-1) {
-        qWarning() << "Failed to get mosquitto connection socket";
+    if (connectSocketNotifiers()==false) {
+        return MOSQ_ERR_NOT_FOUND;
     }
 
-    m_notifier_read = new QSocketNotifier(s, QSocketNotifier::Read, this);
-    QObject::connect(m_notifier_read, SIGNAL(activated(int)), this, SLOT(loopRead()));
+    emit connecting();
 
-    m_notifier_write = new QSocketNotifier(s, QSocketNotifier::Write, this);
-    QObject::connect(m_notifier_write, SIGNAL(activated(int)), this, SLOT(loopWrite()));
+    return r;
+}
+
+int SopoMygga::reconnectToHost()
+{
+    int r;
+
+    r=reconnect_async();
+
+    shutdown();
+
+    if (r!=MOSQ_ERR_SUCCESS) {
+        qWarning() << "Connection failure";
+        return r;
+    }
+
+    if (connectSocketNotifiers()==false) {
+        return MOSQ_ERR_NOT_FOUND;
+    }
 
     emit connecting();
 
@@ -165,36 +197,6 @@ int SopoMygga::disconnectFromHost()
     if (m_isConnected==false)
         return MOSQ_ERR_NO_CONN;
     int r=mosquittopp::disconnect();
-
-    return r;
-}
-
-int SopoMygga::reconnectToHost()
-{
-    int r, s;
-
-    r=reconnect_async();
-
-    shutdown();
-
-    if (r!=MOSQ_ERR_SUCCESS) {
-        qWarning() << "Connection failure";
-        return r;
-    }
-
-    s=socket();
-    if (s==-1) {
-        qWarning() << "Failed to get mosquitto connection socket";
-        return MOSQ_ERR_NOT_FOUND;
-    }
-
-    m_notifier_read = new QSocketNotifier(s, QSocketNotifier::Read, this);
-    QObject::connect(m_notifier_read, SIGNAL(activated(int)), this, SLOT(loopRead()));
-
-    m_notifier_write = new QSocketNotifier(s, QSocketNotifier::Write, this);
-    QObject::connect(m_notifier_write, SIGNAL(activated(int)), this, SLOT(loopWrite()));
-
-    emit connecting();
 
     return r;
 }
