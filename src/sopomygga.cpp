@@ -3,6 +3,7 @@
 
 SopoMygga::SopoMygga(QObject *parent) :
     QObject(parent),
+    mosquittopp(NULL, true),
     m_timer(0),
     m_hostname("localhost"),
     m_port(1883),
@@ -11,15 +12,14 @@ SopoMygga::SopoMygga(QObject *parent) :
     m_isConnected(false),
     m_clientId(),
     m_tlsEnabled(false),
-    m_tls_insecure(false),
-    mosquittopp(NULL, true)
+    m_tls_insecure(false)
 {
 
 }
 
 SopoMygga::~SopoMygga()
 {
-
+    m_topics.clear();
 }
 
 void SopoMygga::addTopicMatch(const QString topic, int topic_d)
@@ -51,7 +51,7 @@ bool SopoMygga::connectSocketNotifiers()
 
 int SopoMygga::connectToHost()
 {
-    int r, s;
+    int r;
 
     if (m_isConnected)
         return MOSQ_ERR_CONN_PENDING;
@@ -116,6 +116,8 @@ void SopoMygga::timerEvent(QTimerEvent *event)
 {
     int r;
 
+    Q_UNUSED(event)
+
     r=loop_misc();
     switch (r) {
     case MOSQ_ERR_SUCCESS:
@@ -125,13 +127,12 @@ void SopoMygga::timerEvent(QTimerEvent *event)
         qWarning() << "Misc fail " << r;
         return;
         break;
-    }
-
-    m_notifier_write->setEnabled(true);
+    }    
 
     if (want_write()==true) {
         qDebug("NWWW");
-        loopWrite();
+        // loopWrite();
+        m_notifier_write->setEnabled(true);
     }
 }
 
@@ -246,6 +247,8 @@ void SopoMygga::clearWill()
 
 void SopoMygga::on_connect(int rc)
 {
+    Q_UNUSED(rc)
+
     m_isConnected=true;
     emit connected();
     emit isConnectedeChanged(m_isConnected);
@@ -254,6 +257,8 @@ void SopoMygga::on_connect(int rc)
 
 void SopoMygga::on_disconnect(int rc)
 {
+    Q_UNUSED(rc)
+
     m_isConnected=false;
 
     shutdown();

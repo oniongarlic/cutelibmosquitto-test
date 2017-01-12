@@ -204,6 +204,10 @@ private:
     QString m_username;
     QString m_password;
 
+    bool m_cleanSession;
+    bool m_isConnected;
+    QString m_clientId;
+
     // TLS
     bool m_tlsEnabled;
     bool m_tls_insecure;
@@ -215,9 +219,6 @@ private:
     int m_mid;
     int m_smid;
     int m_pmid;
-    QString m_clientId;
-    bool m_cleanSession;
-    bool m_isConnected;
 
     QMap<QString, int> m_topics;
     bool connectSocketNotifiers();
