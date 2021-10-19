@@ -1,9 +1,10 @@
-import QtQuick 2.0
-import QtQuick.Layouts 1.1
+import QtQuick 2.12
+import QtQuick.Layouts 1.12
 
 ColumnLayout {
     property alias label: lbl.text
     property alias text: txt.text
+    spacing: 8
     Text {
         id: lbl
         width: parent.width
