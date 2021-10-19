@@ -1,13 +1,15 @@
-import QtQuick 2.5
-import QtQuick.Controls 1.4
-import QtQuick.Layouts 1.1
+import QtQuick 2.12
+import QtQuick.Window 2.12
+import QtQuick.Controls 2.12
+import QtQuick.Controls.Material 2.12
+import QtQuick.Layouts 1.12
 import QtQuick.Dialogs 1.1
 import org.tal.sopomygga 1.0
 
 ApplicationWindow {
     id: app
     visible: true
-    width: 640
+    width: 800
     height: 480
     title: qsTr("libsopomygga test application")
 
@@ -44,12 +46,12 @@ ApplicationWindow {
             }
         }
     }
-    statusBar: StatusBar {
-        RowLayout {
+    footer: ToolBar {
+          RowLayout {
             anchors.fill: parent
             Label { text: mqtt.isConnected ? "Connected to broker" : "Disconnected" }
             Label { text: mqtt.messageCount }
-        }
+          }
     }
 
     MQTT {
